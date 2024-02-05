@@ -19,20 +19,20 @@ public class IncreaseSpeedCommand : SpeedParentCommand
     protected async Task SpeedUp(CancellationToken ct)
     {
         // Smoothly increase the speed to the maximum value.
-        await ChangeSpeedOverTime(_startSpeed, _maxSpeed, _timeToReachMaxSpeed, ct);
+        ChangeSpeedOverTime(_startSpeed, _maxSpeed, _timeToReachMaxSpeed, ct);
         if (ct.IsCancellationRequested) return;
-
-        // Ожидание перед возвращением скорости к начальному значению.
-        await UniTask.Delay(TimeSpan.FromSeconds(_timeToReachMaxSpeed), cancellationToken: ct);
         
-        // Плавное возвращение скорости к начальному значению.
-        await ChangeSpeedOverTime(_maxSpeed, _startSpeed, _timeToReachMaxSpeed, ct);
+        await UniTask.Delay(TimeSpan.FromSeconds(_timeToReachMaxSpeed), cancellationToken: ct);
+        if (ct.IsCancellationRequested) return;
+        
+        ChangeSpeedOverTime(_maxSpeed, _startSpeed, _timeToReachMaxSpeed, ct);
     }
 
     /// Overriding the Execute method to trigger the speedup.
-    public override async void Execute(Player player)
+    public override async Task Execute(Player player)
     {
-        base.Execute(player);
+        ResetCancellationToken();
+        _player = player ?? throw new ArgumentNullException(nameof(player));
         try
         {
             await SpeedUp(_cancellationTokenSource.Token);

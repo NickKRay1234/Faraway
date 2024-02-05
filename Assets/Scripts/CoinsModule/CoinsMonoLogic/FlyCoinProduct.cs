@@ -19,7 +19,9 @@ namespace Factories
             _effectStrategy?.ApplyEffect(other.GetComponent<Player>());
         }
 
-        protected override void OnTriggerExit(Collider other) =>
-            gameObject.SetActive(false);
+        protected override void OnTriggerExit(Collider other)
+        {
+            //gameObject.SetActive(false);
+        }
     }
 }

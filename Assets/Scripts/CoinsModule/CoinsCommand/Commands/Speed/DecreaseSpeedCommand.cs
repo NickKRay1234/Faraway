@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DefaultNamespace.Command.Commands;
 using UnityEngine;
@@ -18,25 +19,23 @@ public class DecreaseSpeedCommand : SpeedParentCommand
     protected async UniTask DecreaseSpeed(CancellationToken ct)
     {
         // Smoothly reduce the speed to the minimum value.
-        await ChangeSpeedOverTime(_startSpeed, _minSpeed, _durationHalf, ct);
-       
-        if (ct.IsCancellationRequested) 
-            return;
-        
+        ChangeSpeedOverTime(_startSpeed, _minSpeed, _durationHalf, ct);
+        if (ct.IsCancellationRequested) return;
         // Waiting before restoring the initial speed.
         await UniTask.Delay(TimeSpan.FromSeconds(_durationHalf), cancellationToken: ct);
-        
+        if (ct.IsCancellationRequested) return;
         // Smoothly restore the speed to the initial value.
-        await ChangeSpeedOverTime(_minSpeed, _context.Settings.StartSpeed, _durationHalf, ct);
+        ChangeSpeedOverTime(_minSpeed, _context.Settings.StartSpeed, _durationHalf, ct);
     }
 
     /// Overriding the Execute method to trigger speed reduction.
-    public override void Execute(Player player)
+    public override async Task Execute(Player player)
     {
-        base.Execute(player);
+        ResetCancellationToken();
+        _player = player ?? throw new ArgumentNullException(nameof(player));
         try
         {
-            DecreaseSpeed(_cancellationTokenSource.Token).Forget();
+            await DecreaseSpeed(_cancellationTokenSource.Token);
         }
         catch (Exception ex)
         {

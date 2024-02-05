@@ -1,5 +1,7 @@
-﻿public interface ICommand
+﻿using System.Threading.Tasks;
+
+public interface ICommand
 {
-    void Execute(Player player);
+    Task Execute(Player player);
     void Cancel();
 }

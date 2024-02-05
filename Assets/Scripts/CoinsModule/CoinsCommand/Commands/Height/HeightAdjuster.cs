@@ -21,7 +21,7 @@ public class HeightAdjuster : IHeightAdjuster
             if (ct.IsCancellationRequested) 
                 break;
             
-            elapsedTime += Time.deltaTime;
+            elapsedTime += 6 * Time.deltaTime;
             float progress = elapsedTime / duration;
             player.transform.position = Vector3.Lerp(startPosition, targetPosition, progress);
             await UniTask.Yield(PlayerLoopTiming.Update, ct);

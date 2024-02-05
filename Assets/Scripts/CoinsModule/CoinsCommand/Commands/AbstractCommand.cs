@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DefaultNamespace.Command.Commands
 {
@@ -18,11 +19,14 @@ namespace DefaultNamespace.Command.Commands
 
         protected AbstractCommand(CommandContext context) => 
             _context = context ?? throw new ArgumentNullException(nameof(context));
-        
-        public virtual void Execute(Player player) =>
-            _player = player ?? throw new ArgumentNullException(nameof(player));
 
-        
+
+        public virtual Task Execute(Player player)
+        {
+            if (player == null) throw new ArgumentNullException(nameof(player));
+            return Task.CompletedTask;
+        }
+
         /// Cancels the current asynchronous operation and recreates the source of the cancellation token.
         public void Cancel()
         {

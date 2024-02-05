@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DefaultNamespace.Command.Commands;
 
@@ -11,11 +12,10 @@ public sealed class FlyCommand : AbstractCommand
         _heightAdjuster = heightAdjuster;
 
     /// Overriding the Execute method to enable flight.
-    public override async void Execute(Player player)
+    public override async Task Execute(Player player)
     {
+        _player = player;
         if (player == null) throw new ArgumentNullException(nameof(player));
-
-        base.Execute(player);
         player.Rigidbody.useGravity = false;
 
         try

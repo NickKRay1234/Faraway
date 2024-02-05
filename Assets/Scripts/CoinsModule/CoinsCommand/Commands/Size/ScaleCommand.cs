@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DefaultNamespace.Command.Commands;
 using UnityEngine;
@@ -40,9 +41,10 @@ public sealed class ScaleCommand : AbstractCommand
     }
 
     /// Override the Execute method to run the scale adjustment.
-    public override void Execute(Player player)
+    public override async Task Execute(Player player)
     {
-        base.Execute(player);
-        AdjustScale(_cancellationTokenSource.Token).Forget();
+        if (player == null) throw new ArgumentNullException(nameof(player));
+        Cancel();
+        await AdjustScale(_cancellationTokenSource.Token);
     }
 }

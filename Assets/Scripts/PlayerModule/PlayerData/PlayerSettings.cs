@@ -11,7 +11,7 @@ public class PlayerSettings : ScriptableObject
         MovementRadius = 40f;
     }
 
-    public float Sensitivity = 5f;
+    public float Sensitivity = 10f;
     public float MovementRadius = 42f;
     public float ForwardSpeed = 5f;
     public float StartSpeed = 5f;

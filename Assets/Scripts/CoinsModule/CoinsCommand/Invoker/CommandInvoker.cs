@@ -15,7 +15,7 @@ public sealed class CommandInvoker
         _currentCommand?.Cancel();
 
         _currentCommand = newCommand;
-        _currentCommand.Execute(player);
+        //_currentCommand.Execute(player);
 
         _commandsHistory.Push(newCommand);
     }

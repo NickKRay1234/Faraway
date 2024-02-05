@@ -18,7 +18,7 @@ namespace DefaultNamespace.Command.Commands
         }
 
         /// Asynchronous method for smoothly changing the speed from one value to another.
-        protected async UniTask ChangeSpeedOverTime(float fromSpeed, float toSpeed, float duration,
+        protected void ChangeSpeedOverTime(float fromSpeed, float toSpeed, float duration,
             CancellationToken ct)
         {
             float elapsedTime = 0;
@@ -31,11 +31,17 @@ namespace DefaultNamespace.Command.Commands
                 elapsedTime += Time.deltaTime;
                 float progress = elapsedTime / duration;
                 _context.Settings.ForwardSpeed = Mathf.Lerp(fromSpeed, toSpeed, progress);
-                await UniTask.Yield(PlayerLoopTiming.Update, ct);
             }
 
             if (!ct.IsCancellationRequested)
                 _context.Settings.ForwardSpeed = toSpeed;
+        }
+        
+        protected void ResetCancellationToken()
+        {
+            if (!_cancellationTokenSource.IsCancellationRequested)
+                _cancellationTokenSource.Cancel();
+            _cancellationTokenSource = new CancellationTokenSource();
         }
     }
 }

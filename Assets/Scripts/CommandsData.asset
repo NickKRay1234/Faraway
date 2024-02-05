@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CommandsData
   m_EditorClassIdentifier: 
   MinSpeed: 2.5
-  MaxSpeed: 50
+  MaxSpeed: 20
   MaxHeight: 10
   NormalHeight: 0.5
   NormalScale: {x: 1, y: 1, z: 1}
