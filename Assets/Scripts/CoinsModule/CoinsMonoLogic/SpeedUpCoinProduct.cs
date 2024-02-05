@@ -6,7 +6,6 @@ public class SpeedUpCoinProduct : CoinProduct
 {
     public override void Initialize(ICoinEffectStrategy effectStrategy)
     {
-        base.Initialize(_effectStrategy);
         _effectStrategy = effectStrategy;
         ProductName = "SpeedUpCoin";
         _isInitialized = true;

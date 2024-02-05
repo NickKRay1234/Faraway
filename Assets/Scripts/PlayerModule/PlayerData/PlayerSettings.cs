@@ -6,6 +6,9 @@ public class PlayerSettings : ScriptableObject
     private void OnEnable()
     {
         ForwardSpeed = 5f;
+        Sensitivity = 5f;
+        StartSpeed = 5f;
+        MovementRadius = 40f;
     }
 
     public float Sensitivity = 5f;

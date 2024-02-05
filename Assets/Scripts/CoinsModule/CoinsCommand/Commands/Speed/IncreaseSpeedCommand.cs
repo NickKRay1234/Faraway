@@ -5,40 +5,22 @@ using Cysharp.Threading.Tasks;
 using DefaultNamespace.Command.Commands;
 using UnityEngine;
 
-public class IncreaseSpeedCommand : AbstractCommand
+public class IncreaseSpeedCommand : SpeedParentCommand
 {
-    public IncreaseSpeedCommand(CommandContext context) : base(context) { }
+    public IncreaseSpeedCommand(CommandContext context) : base(context)
+    {
+        _startSpeed = _context.Settings.StartSpeed;
+        _maxSpeed = _context.Data.MaxSpeed;
+        _timeToReachMaxSpeed = _context.Duration / DIVIDER;
+    }
 
     protected async Task SpeedUp(CancellationToken ct)
     {
-        float startSpeed = _context.Settings.StartSpeed;
-        float maxSpeed = _context.Data.MaxSpeed;
-        float timeToReachMaxSpeed = _context.Duration / 2;
-
-        await ChangeSpeedOverTime(startSpeed, maxSpeed, timeToReachMaxSpeed, ct);
+        await ChangeSpeedOverTime(_startSpeed, _maxSpeed, _timeToReachMaxSpeed, ct);
         if (ct.IsCancellationRequested) return;
 
-        await UniTask.Delay(TimeSpan.FromSeconds(timeToReachMaxSpeed), cancellationToken: ct);
-        await ChangeSpeedOverTime(maxSpeed, startSpeed, timeToReachMaxSpeed, ct);
-    }
-
-    private async Task ChangeSpeedOverTime(float fromSpeed, float toSpeed, float duration, CancellationToken ct)
-    {
-        float elapsedTime = 0;
-
-        while (elapsedTime < duration)
-        {
-            if (ct.IsCancellationRequested) 
-                break;
-
-            elapsedTime += Time.deltaTime;
-            float progress = elapsedTime / duration;
-            _context.Settings.ForwardSpeed = Mathf.Lerp(fromSpeed, toSpeed, progress);
-            await UniTask.Yield(PlayerLoopTiming.Update, ct);
-        }
-
-        if (!ct.IsCancellationRequested)
-            _context.Settings.ForwardSpeed = toSpeed;
+        await UniTask.Delay(TimeSpan.FromSeconds(_timeToReachMaxSpeed), cancellationToken: ct);
+        await ChangeSpeedOverTime(_maxSpeed, _startSpeed, _timeToReachMaxSpeed, ct);
     }
 
     public override async void Execute(Player player)

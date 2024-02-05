@@ -7,7 +7,6 @@ namespace Factories
     {
         public override void Initialize(ICoinEffectStrategy effectStrategy)
         {
-            base.Initialize(_effectStrategy);
             _effectStrategy = effectStrategy;
             ProductName = "SlowDownCoin";
             _isInitialized = true;
@@ -15,7 +14,7 @@ namespace Factories
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if (!_isInitialized) Initialize(new SlowDownEffectStrategy(_context));
+            if (!_isInitialized) Initialize(new SlowDownEffectStrategy(new CommandContext(_playerSettings, _data, 10)));
             _effectStrategy?.ApplyEffect(other.GetComponent<Player>());
         }
 

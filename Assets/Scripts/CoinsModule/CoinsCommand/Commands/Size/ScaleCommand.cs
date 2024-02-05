@@ -12,10 +12,10 @@ public sealed class ScaleCommand : AbstractCommand
 
     private async UniTask AdjustScale(CancellationToken ct)
     {
-        await ChangeScaleSmoothly(_player.transform, _context.Data.MaxScale, _context.Duration / 2, ct);
+        await ChangeScaleSmoothly(_player.transform, _context.Data.MaxScale, _context.Duration / DIVIDER, ct);
         if (ct.IsCancellationRequested) return;
-        await UniTask.Delay(TimeSpan.FromSeconds(_context.Duration / 2), cancellationToken: ct);
-        await ChangeScaleSmoothly(_player.transform, _context.Data.NormalScale, _context.Duration / 2, ct);
+        await UniTask.Delay(TimeSpan.FromSeconds(_context.Duration / DIVIDER), cancellationToken: ct);
+        await ChangeScaleSmoothly(_player.transform, _context.Data.NormalScale, _context.Duration / DIVIDER, ct);
     }
 
     private async UniTask ChangeScaleSmoothly(Transform target, Vector3 newScale, float duration, CancellationToken ct)

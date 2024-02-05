@@ -8,6 +8,8 @@ namespace DefaultNamespace.Command.Commands
         protected CancellationTokenSource _cancellationTokenSource = new();
         protected readonly CommandContext _context;
         protected Player _player;
+        
+        protected const int DIVIDER = 2;
 
         protected AbstractCommand(CommandContext context) => 
             _context = context ?? throw new ArgumentNullException(nameof(context));
