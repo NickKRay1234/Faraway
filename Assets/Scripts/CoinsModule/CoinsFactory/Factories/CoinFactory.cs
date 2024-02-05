@@ -6,18 +6,18 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Factories
 {
-    public sealed class CoinFactory : AbstractCommand
+    public sealed class CoinFactory
     {
-        private new readonly CommandContext _context;
+        private readonly CommandContext _context;
         private readonly Func<CommandContext, ICoinEffectStrategy> _strategyFactory;
 
-        public CoinFactory(CommandContext context, Func<CommandContext, ICoinEffectStrategy> strategyFactory) : base(context)
+        public CoinFactory(CommandContext context, Func<CommandContext, ICoinEffectStrategy> strategyFactory)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _strategyFactory = strategyFactory ?? throw new ArgumentNullException(nameof(strategyFactory));
         }
 
-        public async Task<TProduct> GetProduct<TProduct>(AssetReference assetReference, Transform parent) where TProduct : MonoBehaviour, IProduct
+        public async Task GetProduct<TProduct>(AssetReference assetReference, Transform parent) where TProduct : MonoBehaviour, IProduct
         {
             var handle = Addressables.InstantiateAsync(assetReference, parent.position, Quaternion.identity, parent);
             await handle.Task;
@@ -29,7 +29,7 @@ namespace Factories
                 if (product != null)
                 {
                     InitializeProduct(product);
-                    return product;
+                    return;
                 }
             }
             else
@@ -38,8 +38,6 @@ namespace Factories
                 Debug.LogError($"Failed to instantiate product via Addressables. Type: {typeof(TProduct)}");
 #endif
             }
-
-            return null;
         }
 
         private void InitializeProduct<TProduct>(TProduct product) where TProduct : IProduct
