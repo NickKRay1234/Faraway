@@ -1,41 +1,33 @@
-﻿using ColorBump.Manager.CoinsModule.CoinsCommand.Data;
-using Data;
-using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
+﻿using System;
+using System.Threading;
 
 namespace Factories
 {
-    public abstract class AbstractFactory : MonoBehaviour
+    public abstract class AbstractCommand : ICommand, IDisposable
     {
-        protected CommandContext _context;
-        protected AddressablesCoinsData _addressablesCoinsData;
-        protected PlayerSettings _playerSettings;
-        protected CommandsData _data;
+        protected CancellationTokenSource _cancellationTokenSource = new();
+        protected readonly CommandContext _context;
+        protected Player _player;
         
+        protected const int DIVIDER = 2;
 
-        protected void InstantiateProduct<TProduct>(AssetReference assetReference, Transform parent) where TProduct : MonoBehaviour, IProduct
+        protected AbstractCommand(CommandContext context) => 
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        
+        public virtual void Execute(Player player) =>
+            _player = player ?? throw new ArgumentNullException(nameof(player));
+
+        public void Cancel()
         {
-            _context = new CommandContext(_playerSettings, _data, 10);
-            var handle = Addressables.InstantiateAsync(assetReference, parent.position, Quaternion.identity, parent);
-            handle.Completed += OnObjectInstantiated<TProduct>;
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = new CancellationTokenSource();
         }
 
-        private void OnObjectInstantiated<TProduct>(AsyncOperationHandle<GameObject> handle) where TProduct : MonoBehaviour, IProduct
+        public void Dispose()
         {
-            if (handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                GameObject instance = handle.Result;
-                TProduct product = instance.GetComponent<TProduct>();
-                if (product != null)
-                    InitializeProduct(product);
-            }
-            else
-#if UNITY_EDITOR
-                Debug.LogError($"Failed to instantiate product via Addressables. Type: {typeof(TProduct)}");
-#endif
+            _cancellationTokenSource.Dispose();
+            GC.SuppressFinalize(this);
         }
-
-        protected abstract void InitializeProduct<TProduct>(TProduct product) where TProduct : MonoBehaviour, IProduct;
     }
 }

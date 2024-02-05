@@ -3,7 +3,7 @@ using System.Threading;
 
 namespace DefaultNamespace.Command.Commands
 {
-    public abstract class AbstractCommand : ICommand
+    public abstract class AbstractCommand : ICommand, IDisposable
     {
         protected CancellationTokenSource _cancellationTokenSource = new();
         protected readonly CommandContext _context;
@@ -23,8 +23,11 @@ namespace DefaultNamespace.Command.Commands
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
         }
-        
-        ~AbstractCommand() => 
+
+        public void Dispose()
+        {
             _cancellationTokenSource.Dispose();
+            GC.SuppressFinalize(this);
+        }
     }
 }
