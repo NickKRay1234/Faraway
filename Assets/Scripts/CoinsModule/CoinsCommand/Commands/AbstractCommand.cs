@@ -1,28 +1,28 @@
-﻿using System.Threading;
-using ColorBump.Manager.CoinsModule.CoinsCommand.Data;
+﻿using System;
+using System.Threading;
 
 namespace DefaultNamespace.Command.Commands
 {
     public abstract class AbstractCommand : ICommand
     {
-        protected readonly CancellationTokenSource _cancellationTokenSource = new();
-        protected readonly PlayerSettings _settings;
-        protected readonly CommandsData _commandsData;
-        protected float _duration;
+        protected CancellationTokenSource _cancellationTokenSource = new();
+        protected readonly CommandContext _context;
         protected Player _player;
+
+        protected AbstractCommand(CommandContext context) => 
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         
-        protected AbstractCommand(PlayerSettings settings, CommandsData commandsData, float duration = 10f)
-        {
-            _duration = duration;
-            _settings = settings;
-            _commandsData = commandsData;
-        }
+        public virtual void Execute(Player player) =>
+            _player = player ?? throw new ArgumentNullException(nameof(player));
 
-        public virtual void Execute(Player player)
+        public void Cancel()
         {
-            _player = player;
+            _cancellationTokenSource.Cancel();
+            _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = new CancellationTokenSource();
         }
-
-        public void Cancel() => _cancellationTokenSource.Cancel();
+        
+        ~AbstractCommand() => 
+            _cancellationTokenSource.Dispose();
     }
 }

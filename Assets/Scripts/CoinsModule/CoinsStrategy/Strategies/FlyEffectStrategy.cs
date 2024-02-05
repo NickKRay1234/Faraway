@@ -1,8 +1,10 @@
-using ColorBump.Manager.CoinsModule.CoinsCommand.Data;
 using DefaultNamespace.Strategy;
 
-public sealed class FlyEffectStrategy : AbstractStrategy
+namespace Strategies
 {
-    public FlyEffectStrategy(PlayerSettings playerSettings, CommandsData data)=>
-        _commands.AddRange(new ICommand[] { new FlyCommand(playerSettings, data,10) });
+    public sealed class FlyEffectStrategy : AbstractStrategy
+    {
+        public FlyEffectStrategy(CommandContext context)
+            : base(new ICommand[] { new FlyCommand(context, new HeightAdjuster()) }) { }
+    }
 }

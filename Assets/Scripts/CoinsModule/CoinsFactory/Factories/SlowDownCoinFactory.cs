@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Strategies;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace Factories
@@ -15,7 +16,7 @@ namespace Factories
         {
             if (product is SlowDownCoinProduct slowDownCoinProduct)
             {
-                ICoinEffectStrategy slowDownEffectStrategy = new SlowDownEffectStrategy(_playerSettings, _data);
+                ICoinEffectStrategy slowDownEffectStrategy = new SlowDownEffectStrategy(_context);
                 slowDownCoinProduct.Initialize(slowDownEffectStrategy);
             }
         }

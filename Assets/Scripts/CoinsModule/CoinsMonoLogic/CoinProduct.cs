@@ -10,9 +10,14 @@ public abstract class CoinProduct : MonoBehaviour, IProduct
     public string ProductName { get; set; }
     protected bool _isInitialized = false;
     protected ICoinEffectStrategy _effectStrategy;
+    protected CommandContext _context;
     
 
-    public abstract void Initialize(ICoinEffectStrategy effectStrategy);
+    public virtual void Initialize(ICoinEffectStrategy effectStrategy)
+    {
+        _context = new CommandContext(_playerSettings, _data, 10);
+    }
+
     protected abstract void OnTriggerEnter(Collider other);
     protected abstract void OnTriggerExit(Collider other);
 }

@@ -1,11 +1,10 @@
-﻿using ColorBump.Manager.CoinsModule.CoinsCommand.Data;
-using DefaultNamespace.Strategy;
+﻿using DefaultNamespace.Strategy;
 
-namespace Factories
+namespace Strategies
 {
-    public class SlowDownEffectStrategy : AbstractStrategy
+    public sealed class SlowDownEffectStrategy : AbstractStrategy
     {
-        public SlowDownEffectStrategy(PlayerSettings playerSettings, CommandsData data) =>
-            _commands.AddRange(new ICommand[] { new DecreaseSpeedCommand(playerSettings,data, 10f) });
+        public SlowDownEffectStrategy(CommandContext context)
+            : base(new ICommand[] { new DecreaseSpeedCommand(context) }) { }
     }
 }

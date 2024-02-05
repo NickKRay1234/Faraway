@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Strategies;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 
 namespace Factories
@@ -15,7 +16,7 @@ namespace Factories
         {
             if (product is FlyCoinProduct flyCoinProduct)
             {
-                ICoinEffectStrategy flyEffectStrategy = new FlyEffectStrategy(_playerSettings, _data);
+                ICoinEffectStrategy flyEffectStrategy = new FlyEffectStrategy(_context);
                 flyCoinProduct.Initialize(flyEffectStrategy);
             }
         }

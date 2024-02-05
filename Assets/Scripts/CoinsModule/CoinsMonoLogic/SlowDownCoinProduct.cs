@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using Strategies;
+using UnityEngine;
 
 namespace Factories
 {
-    public class SlowDownCoinProduct : CoinProduct, IProduct
+    public class SlowDownCoinProduct : CoinProduct
     {
         public override void Initialize(ICoinEffectStrategy effectStrategy)
         {
+            base.Initialize(_effectStrategy);
             _effectStrategy = effectStrategy;
             ProductName = "SlowDownCoin";
             _isInitialized = true;
@@ -13,7 +15,7 @@ namespace Factories
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if (!_isInitialized) Initialize(new SlowDownEffectStrategy(_playerSettings, _data));
+            if (!_isInitialized) Initialize(new SlowDownEffectStrategy(_context));
             _effectStrategy?.ApplyEffect(other.GetComponent<Player>());
         }
 

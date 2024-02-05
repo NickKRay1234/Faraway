@@ -1,49 +1,58 @@
 ﻿using System;
 using System.Threading;
-using ColorBump.Manager.CoinsModule.CoinsCommand.Data;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using DefaultNamespace.Command.Commands;
 using UnityEngine;
 
 public class IncreaseSpeedCommand : AbstractCommand
 {
-    public IncreaseSpeedCommand(PlayerSettings settings, CommandsData data, float duration = 10f) : base(settings, data, duration)
-    {
-    }
+    public IncreaseSpeedCommand(CommandContext context) : base(context) { }
 
-    protected async UniTask SpeedUp(CancellationToken ct)
+    protected async Task SpeedUp(CancellationToken ct)
     {
-        float startSpeed = _settings.StartSpeed;
-        float maxSpeed = _commandsData.MaxSpeed;
-        float timeToReachMaxSpeed = _duration / 2;
-        
+        float startSpeed = _context.Settings.StartSpeed;
+        float maxSpeed = _context.Data.MaxSpeed;
+        float timeToReachMaxSpeed = _context.Duration / 2;
+
         await ChangeSpeedOverTime(startSpeed, maxSpeed, timeToReachMaxSpeed, ct);
         if (ct.IsCancellationRequested) return;
-        
+
         await UniTask.Delay(TimeSpan.FromSeconds(timeToReachMaxSpeed), cancellationToken: ct);
         await ChangeSpeedOverTime(maxSpeed, startSpeed, timeToReachMaxSpeed, ct);
     }
 
-    private async UniTask ChangeSpeedOverTime(float fromSpeed, float toSpeed, float duration, CancellationToken ct)
+    private async Task ChangeSpeedOverTime(float fromSpeed, float toSpeed, float duration, CancellationToken ct)
     {
         float elapsedTime = 0;
 
         while (elapsedTime < duration)
         {
-            if (ct.IsCancellationRequested) break;
+            if (ct.IsCancellationRequested) 
+                break;
 
             elapsedTime += Time.deltaTime;
             float progress = elapsedTime / duration;
-            _settings.ForwardSpeed = Mathf.Lerp(fromSpeed, toSpeed, progress);
+            _context.Settings.ForwardSpeed = Mathf.Lerp(fromSpeed, toSpeed, progress);
             await UniTask.Yield(PlayerLoopTiming.Update, ct);
         }
 
-        _settings.ForwardSpeed = toSpeed;
+        if (!ct.IsCancellationRequested)
+            _context.Settings.ForwardSpeed = toSpeed;
     }
 
-    public override void Execute(Player player)
+    public override async void Execute(Player player)
     {
         base.Execute(player);
-        SpeedUp(_cancellationTokenSource.Token).Forget();
+        try
+        {
+            await SpeedUp(_cancellationTokenSource.Token);
+        }
+        catch (Exception ex)
+        {
+#if UNITY_EDITOR
+            Debug.LogError($"Error executing IncreaseSpeedCommand: {ex.Message}");
+#endif
+        }
     }
 }

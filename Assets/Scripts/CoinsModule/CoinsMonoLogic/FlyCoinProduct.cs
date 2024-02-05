@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Strategies;
+using UnityEngine;
 
 namespace Factories
 {
@@ -6,6 +7,7 @@ namespace Factories
     {
         public override void Initialize(ICoinEffectStrategy effectStrategy)
         {
+            base.Initialize(_effectStrategy);
             _effectStrategy = effectStrategy;
             ProductName = "FlyCoin";
             _isInitialized = true;
@@ -14,7 +16,7 @@ namespace Factories
 
         protected override void OnTriggerEnter(Collider other)
         {
-            if(!_isInitialized) Initialize(new FlyEffectStrategy(_playerSettings, _data));
+            if(!_isInitialized) Initialize(new FlyEffectStrategy(_context));
             _effectStrategy?.ApplyEffect(other.GetComponent<Player>());
         }
 

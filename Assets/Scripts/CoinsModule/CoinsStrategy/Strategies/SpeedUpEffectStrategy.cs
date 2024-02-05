@@ -1,9 +1,10 @@
-﻿using ColorBump.Manager.CoinsModule.CoinsCommand.Data;
-using DefaultNamespace.Strategy;
+﻿using DefaultNamespace.Strategy;
 
-public class SpeedUpEffectStrategy : AbstractStrategy
+namespace Strategies
 {
-    public SpeedUpEffectStrategy(PlayerSettings playerSettings, CommandsData data) =>
-        _commands.AddRange(new ICommand[] { 
-            new IncreaseSpeedCommand(playerSettings, data,10)});
+    public class SpeedUpEffectStrategy : AbstractStrategy
+    {
+        public SpeedUpEffectStrategy(CommandContext context)
+            : base(new ICommand[] { new IncreaseSpeedCommand(context) }) { }
+    }
 }

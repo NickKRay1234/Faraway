@@ -8,6 +8,7 @@ namespace Factories
 {
     public abstract class AbstractFactory : MonoBehaviour
     {
+        protected CommandContext _context;
         protected AddressablesCoinsData _addressablesCoinsData;
         protected PlayerSettings _playerSettings;
         protected CommandsData _data;
@@ -15,6 +16,7 @@ namespace Factories
 
         protected void InstantiateProduct<TProduct>(AssetReference assetReference, Transform parent) where TProduct : MonoBehaviour, IProduct
         {
+            _context = new CommandContext(_playerSettings, _data, 10);
             var handle = Addressables.InstantiateAsync(assetReference, parent.position, Quaternion.identity, parent);
             handle.Completed += OnObjectInstantiated<TProduct>;
         }
