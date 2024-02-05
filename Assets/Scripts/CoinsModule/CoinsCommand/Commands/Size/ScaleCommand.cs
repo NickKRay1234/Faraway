@@ -4,12 +4,14 @@ using Cysharp.Threading.Tasks;
 using DefaultNamespace.Command.Commands;
 using UnityEngine;
 
+/// Specific implementation of the command to change the player's scale.
 public sealed class ScaleCommand : AbstractCommand
 {
     public ScaleCommand(CommandContext context) : base(context)
     {
     }
-
+    
+    /// Asynchronous method for smoothly adjusting the player's scale.
     private async UniTask AdjustScale(CancellationToken ct)
     {
         await ChangeScaleSmoothly(_player.transform, _context.Data.MaxScale, _context.Duration / DIVIDER, ct);
@@ -37,6 +39,7 @@ public sealed class ScaleCommand : AbstractCommand
         target.localScale = newScale;
     }
 
+    /// Override the Execute method to run the scale adjustment.
     public override void Execute(Player player)
     {
         base.Execute(player);

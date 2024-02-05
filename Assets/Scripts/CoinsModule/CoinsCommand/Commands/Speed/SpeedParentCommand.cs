@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace DefaultNamespace.Command.Commands
 {
+    /// Base class for speed change commands, inherits from AbstractCommand.
     public class SpeedParentCommand : AbstractCommand
     {
         protected float _startSpeed;
@@ -16,6 +17,7 @@ namespace DefaultNamespace.Command.Commands
         {
         }
 
+        /// Asynchronous method for smoothly changing the speed from one value to another.
         protected async UniTask ChangeSpeedOverTime(float fromSpeed, float toSpeed, float duration,
             CancellationToken ct)
         {
