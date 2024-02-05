@@ -14,7 +14,7 @@ public class SpeedUpCoinProduct : CoinProduct
 
     protected override void OnTriggerEnter(Collider other)
     {
-        if (!_isInitialized) Initialize(new SpeedUpEffectStrategy(_context));
+        if (!_isInitialized) Initialize(new SpeedUpEffectStrategy(new CommandContext(_playerSettings, _data, 10)));
         _effectStrategy?.ApplyEffect(other.GetComponent<Player>());
     }
 
